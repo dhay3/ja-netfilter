@@ -4,7 +4,7 @@ on:
     - cron: "0 */24 * * *"
   workflow_dispatch:
 jobs:
-  set-up-jdk:
+  ja-netfilter-nightly-build:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -42,8 +42,10 @@ jobs:
           cp plugin-dns/target/*-jar-with-dependencies.jar staging/
           cp plugin-power/target/*-jar-with-dependencies.jar staging/
           cp plugin-url/target/*-jar-with-dependencies.jar staging/
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: Package
-          path: staging
+          cp -r config-dbeaver staging/
+          cp -r config-jetbrains staging/
+          tar -cvf ja-netfilter.tar staging && bzip2 ja-netfilter.tar
+      - name: Create Release
+        run: |
+          gh release create "$(date -I)" --notes "nightly build" ja-netfilter.tar.bz2
+          
