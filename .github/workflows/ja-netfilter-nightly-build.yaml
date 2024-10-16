@@ -46,7 +46,6 @@ jobs:
           mkdir -p staging/ja-netfilter/plugins-dbeaver
           mkdir -p staging/ja-netfilter/plugins-jetbrains
           cp ja-netfilter/target/*-jar-with-dependencies.jar staging/ja-netfilter
-          cd staging
           for plugin in ${{env.plugins}};do
             cp ${plugin}/target/*-jar-with-dependencies.jar staging/ja-netfilter/plugins
           done
@@ -54,6 +53,7 @@ jobs:
             cp -r .github/config-${target} staging/ja-netfilter
             ln -s ja-netfilter/plugins ja-netfilter/plugins-${target}
           done
+          cd staging
           tar -cvf ja-netfilter.tar ja-netfilter && bzip2 ja-netfilter.tar
       - name: Create Release
         env:
