@@ -4,7 +4,9 @@ on:
     - cron: "0 */24 * * *"
   workflow_dispatch:
 jobs:
-  config:
+  nightly-build:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -18,11 +20,6 @@ jobs:
         run: |
           git submodule init
           git submodule update
-  build:
-    needs: config
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
       - name: Set Up JDK8
         uses: actions/setup-java@v4
         with:
@@ -40,13 +37,6 @@ jobs:
       - name: Packaging plugin-url
         run: |
           mvn package -f plugin-url/pom.xml
-  release:
-    needs: build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: write
-    steps:
       - name: Stage Artifacts
         run: |
           mkdir staging
