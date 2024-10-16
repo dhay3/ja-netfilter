@@ -1,0 +1,24 @@
+[submodule "ja-netfilter"]
+	path = ja-netfilter
+	url = https://gitee.com/ja-netfilter/ja-netfilter
+[submodule "plugin-dns"]
+	path = plugin-dns
+	url = https://gitee.com/ja-netfilter/plugin-dns
+[submodule "plugin-dump"]
+	path = plugin-dump
+	url = https://gitee.com/ja-netfilter/plugin-dump
+[submodule "plugin-env"]
+	path = plugin-env
+	url = https://gitee.com/ja-netfilter/plugin-env
+[submodule "plugin-hideme"]
+	path = plugin-hideme
+	url = https://gitee.com/ja-netfilter/plugin-hideme
+[submodule "plugin-native"]
+	path = plugin-native
+	url = https://gitee.com/ja-netfilter/plugin-native
+[submodule "plugin-power"]
+	path = plugin-power
+	url = https://gitee.com/ja-netfilter/plugin-power
+[submodule "plugin-url"]
+	path = plugin-url
+	url = https://gitee.com/ja-netfilter/plugin-url
