@@ -1,4 +1,4 @@
-name: test
+name: ja-netfilter-nightly-build
 on:
   schedule:
     - cron: "0 */24 * * *"
@@ -15,7 +15,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
       - name: Update Submodules
-        run:  |
+        run: |
           git submodule init
           git submodule update
       - name: Set Up JDK8
@@ -23,12 +23,27 @@ jobs:
         with:
           java-version: '8'
           distribution: 'dragonwell'
-      - name: Packaging
+      - name: Packaging core
         run: |
           mvn package -f ja-netfilter/pom.xml
-          mvn package -f plugin-dns/pom.xml
-          mvn package -f plugin-power/pom.xml
-          mvn package -f plugin-url/pom.xml
-      - name: end
+      - name: Packaging plugin-dns
         run: |
-          echo 33333
+          mvn package -f plugin-dns/pom.xml
+      - name: Packaging plugin-power
+        run: |
+          mvn package -f plugin-power/pom.xml
+      - name: Packaging plugin-url
+        run: |
+          mvn package -f plugin-url/pom.xml
+      - name: Stage Artifacts
+        run: |
+          mkdir staging
+          cp ja-netfilter/target/*-jar-with-dependencies.jar staging/
+          cp plugin-dns/target/*-jar-with-dependencies.jar staging/
+          cp plugin-power/target/*-jar-with-dependencies.jar staging/
+          cp plugin-url/target/*-jar-with-dependencies.jar staging/
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Package
+          path: staging
