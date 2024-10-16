@@ -10,6 +10,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
+      - name: Set Up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'oracle'
       - name: Packaging
         run: |
           mvn package -f ja-netfilter/pom.xml
