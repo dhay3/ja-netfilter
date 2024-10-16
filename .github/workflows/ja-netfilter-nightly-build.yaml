@@ -54,6 +54,7 @@ jobs:
             ln -s staging/ja-netfilter/plugins staging/ja-netfilter/plugins-${target}
           done
           cd staging
+          ls -lh
           tar -cvf ja-netfilter.tar ja-netfilter && bzip2 ja-netfilter.tar
       - name: Create Release
         env:
