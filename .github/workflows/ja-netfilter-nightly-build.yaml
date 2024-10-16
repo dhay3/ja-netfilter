@@ -25,7 +25,7 @@ jobs:
         with:
           java-version: '8'
           distribution: 'dragonwell'
-      - name: Packaging core
+      - name: Packaging ja-netfilter
         run: |
           mvn package -f ja-netfilter/pom.xml
       - name: Packaging plugin-dns
@@ -38,15 +38,23 @@ jobs:
         run: |
           mvn package -f plugin-url/pom.xml
       - name: Stage Artifacts
+        env:
+          plugins: plugin-dns plugin-power plugin-url
+          targets: dbeaver jetbrains
         run: |
-          mkdir staging
-          cp ja-netfilter/target/*-jar-with-dependencies.jar staging/
-          cp plugin-dns/target/*-jar-with-dependencies.jar staging/
-          cp plugin-power/target/*-jar-with-dependencies.jar staging/
-          cp plugin-url/target/*-jar-with-dependencies.jar staging/
-          cp -r .github/config-dbeaver staging/
-          cp -r .github/config-jetbrains staging/
-          tar -cvf ja-netfilter.tar staging && bzip2 ja-netfilter.tar
+          mkdir -p staging/ja-netfilter/plugins
+          mkdir -p staging/ja-netfilter/plugins-dbeaver
+          mkdir -p staging/ja-netfilter/plugins-jetbrains
+          cp ja-netfilter/target/*-jar-with-dependencies.jar staging/ja-netfilter
+          cd staging
+          for plugin in ${{env.plugins}};do
+            cp ${plugin}/target/*-jar-with-dependencies.jar staging/ja-netfilter/plugins
+          done
+          for target in ${{env.targets}};do
+            cp -r .github/config-${target} staging/ja-netfilter
+            ln -s ja-netfilter/plugins ja-netfilter/plugins-${target}
+          done
+          tar -cvf ja-netfilter.tar ja-netfilter && bzip2 ja-netfilter.tar
       - name: Create Release
         env:
           GH_TOKEN: ${{ github.token }}
