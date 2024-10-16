@@ -46,6 +46,7 @@ jobs:
           cp -r config-jetbrains staging/
           tar -cvf ja-netfilter.tar staging && bzip2 ja-netfilter.tar
       - name: Create Release
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$(date -I)" --notes "nightly build" ja-netfilter.tar.bz2
-          
