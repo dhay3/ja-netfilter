@@ -42,8 +42,8 @@ jobs:
           plugins: plugin-dns plugin-power plugin-url
           targets: dbeaver jetbrains
         run: |
+          mkdir -p staging/ja-netfilter/plugins  
           cp ja-netfilter/target/*-jar-with-dependencies.jar staging/ja-netfilter
-          mkdir -p staging/ja-netfilter/plugins          
           for plugin in ${{env.plugins}};do
             cp ${plugin}/target/*-jar-with-dependencies.jar staging/ja-netfilter/plugins
           done
