@@ -44,8 +44,8 @@ jobs:
           cp plugin-dns/target/*-jar-with-dependencies.jar staging/
           cp plugin-power/target/*-jar-with-dependencies.jar staging/
           cp plugin-url/target/*-jar-with-dependencies.jar staging/
-          cp -r config-dbeaver staging/
-          cp -r config-jetbrains staging/
+          cp -r .github/config-dbeaver staging/
+          cp -r .github/config-jetbrains staging/
           tar -cvf ja-netfilter.tar staging && bzip2 ja-netfilter.tar
       - name: Create Release
         env:
