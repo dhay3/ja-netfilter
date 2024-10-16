@@ -51,7 +51,7 @@ jobs:
           done
           for target in ${{env.targets}};do
             cp -r .github/config-${target} staging/ja-netfilter
-            ln -s ja-netfilter/plugins ja-netfilter/plugins-${target}
+            ln -s staging/ja-netfilter/plugins staging/ja-netfilter/plugins-${target}
           done
           cd staging
           tar -cvf ja-netfilter.tar ja-netfilter && bzip2 ja-netfilter.tar
