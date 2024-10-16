@@ -10,13 +10,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.7
-      - name: Update Submodules
-        run:  |
+      - name: Config Github Action Bot
+        run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+      - name: Update Submodules
+        run:  |
           git submodule init
           git submodule update
-      - name: Set Up JDK
+      - name: Set Up JDK8
         uses: actions/setup-java@v4
         with:
           java-version: '8'
@@ -24,3 +26,9 @@ jobs:
       - name: Packaging
         run: |
           mvn package -f ja-netfilter/pom.xml
+          mvn package -f plugin-dns/pom.xml
+          mvn package -f plugin-power/pom.xml
+          mvn package -f plugin-url/pom.xml
+      - name: end
+        run: |
+          echo 33333
