@@ -4,7 +4,6 @@ on:
     - cron: "0 */24 * * *"
   workflow_dispatch:
 jobs:
-  
   nightly-build:
     permissions:
       contents: write
@@ -44,8 +43,8 @@ jobs:
           python-version: 3.12
       - name: Get Licenses
         run: |
-          pip install -r requirements.txt
-          python get_jb_licenses.py
+          pip install -r scripts/requirements.txt
+          python scripts/get_jb_licenses.py
       - name: Stage Artifacts
         env:
           plugins: plugin-dns plugin-power plugin-url
@@ -53,6 +52,7 @@ jobs:
         run: |
           mkdir -p staging/ja-netfilter/plugins  
           mv licenses staging/ja-netfilter
+          cp .github/workflows/base.vmoptions staging/netfitler
           cp ja-netfilter/target/*-jar-with-dependencies.jar staging/ja-netfilter
           for plugin in ${{env.plugins}};do
             cp ${plugin}/target/*-jar-with-dependencies.jar staging/ja-netfilter/plugins
