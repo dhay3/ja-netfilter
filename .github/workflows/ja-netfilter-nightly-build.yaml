@@ -48,7 +48,9 @@ jobs:
             cp ${plugin}/target/*-jar-with-dependencies.jar staging/ja-netfilter/plugins
           done
           for target in ${{env.targets}};do
-            ln -s staging/ja-netfilter/plugins staging/ja-netfilter/plugins-${target}
+            cd staging
+            ln -s ja-netfilter/plugins ja-netfilter/plugins-${target}
+            cd ..
             cp -r .github/config-${target} staging/ja-netfilter
           done
           cd staging && ls -lh
