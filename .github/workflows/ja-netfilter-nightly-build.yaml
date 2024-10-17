@@ -52,7 +52,7 @@ jobs:
         run: |
           mkdir -p staging/ja-netfilter/plugins  
           mv licenses staging/ja-netfilter
-          cp .github/base.vmoptions staging/netfitler
+          cp .github/base.vmoptions staging/ja-netfitler
           cp ja-netfilter/target/*-jar-with-dependencies.jar staging/ja-netfilter
           for plugin in ${{env.plugins}};do
             cp ${plugin}/target/*-jar-with-dependencies.jar staging/ja-netfilter/plugins
