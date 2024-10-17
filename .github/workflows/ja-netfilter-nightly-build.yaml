@@ -44,8 +44,7 @@ jobs:
           python-version: 3.12
       - name: Get Licenses
         run: |
-          pip install requests==2.32.3
-          pip install lxml==5.3.0
+          pip install -r requirements.txt
           python get_jb_licenses.py
       - name: Stage Artifacts
         env:
