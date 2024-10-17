@@ -37,12 +37,20 @@ jobs:
       - name: Packaging plugin-url
         run: |
           mvn package -f plugin-url/pom.xml
+      - name: Setup Python
+        uses: actions/setup-python@v5.1.0
+        with:
+          python-version: 3.9
+      - name: Get Licenses
+        run: |
+          python get_jb_licenses.py
       - name: Stage Artifacts
         env:
           plugins: plugin-dns plugin-power plugin-url
           targets: dbeaver jetbrains
         run: |
           mkdir -p staging/ja-netfilter/plugins  
+          mv licenses staging/ja-netfilter
           cp ja-netfilter/target/*-jar-with-dependencies.jar staging/ja-netfilter
           for plugin in ${{env.plugins}};do
             cp ${plugin}/target/*-jar-with-dependencies.jar staging/ja-netfilter/plugins
