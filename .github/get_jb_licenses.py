@@ -2,9 +2,12 @@ import json
 import os
 import re
 import requests
+import logging
 
 from lxml import etree
 
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 class cex(Exception):
     def __init__(self, message):
@@ -40,6 +43,7 @@ def get_licenses(raw_html: str) -> []:
         data_sequence = article.get('data-sequence')
         data_title = article.xpath('./descendant::h1')[0].get('title')
         data_version = article.xpath('./descendant::button[@data-version]')[0].get('data-version')
+        logger.info(f'Gathering {data_title}.{data_version}')
         yield [f'{re.sub(r'[^\w\-.]', '_', data_title)}.{data_version}.license',
                jbkeys.get(data_sequence).get(data_version)]
 
