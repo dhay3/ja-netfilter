@@ -63,9 +63,10 @@ jobs:
             ln -s plugins plugins-${target}
             cd ../..
           done
-          cd staging && tree
+          cd staging
           tar -cf ja-netfilter.tar ja-netfilter && bzip2 ja-netfilter.tar
           tee ja-netfilter.tar.bz2.sha1sum <<< $(sha1sum ja-netfilter.tar.bz2)
+          tree
       - name: Create Release
         env:
           GH_TOKEN: ${{ github.token }}
