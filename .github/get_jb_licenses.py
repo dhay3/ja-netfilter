@@ -11,9 +11,9 @@ class cex(Exception):
         super().__init__(message)
 
 
-def get_raw_html() -> str:
-    url = 'https://ipfs.io/ipfs/bafybeih65no5dklpqfe346wyeiak6wzemv5d7z2ya7nssdgwdz4xrmdu6i/'
-    user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+def get_raw_html(url: str = 'https://ipfs.io/ipfs/bafybeih65no5dklpqfe346wyeiak6wzemv5d7z2ya7nssdgwdz4xrmdu6i/') -> str:
+    user_agent = ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                  'Chrome/58.0.3029.110 Safari/537.3')
     r = requests.get(url=url,
                      headers={
                          'User-Agent': user_agent
@@ -21,7 +21,9 @@ def get_raw_html() -> str:
     if 200 == r.status_code:
         return r.text
     else:
-        raise cex(f'http cod is {r.status_code}')
+        # TODO: When the exception has been raised, traverse the https://3.jetbra.in to get one of available sites
+        # TODO: Use recursive function instead
+        raise cex(f'http code is {r.status_code}')
 
 
 def get_licenses(raw_html: str) -> []:
@@ -42,7 +44,7 @@ def get_licenses(raw_html: str) -> []:
                jbkeys.get(data_sequence).get(data_version)]
 
 
-def write_licenses(raw_html) -> None:
+def write_licenses(raw_html: str) -> None:
     jb_licenses = get_licenses(raw_html)
     os.makedirs('licenses', exist_ok=True)
     for jb_license in jb_licenses:
