@@ -54,6 +54,7 @@ jobs:
           mkdir -p staging/ja-netfilter/plugins
           cp -r src/* staging/ja-netfilter
           cp -r licenses staging/ja-netfilter
+          chmod +x staging/ja-netfilter/scripts/install.sh staging/ja-netfilter/scripts/uninstall.sh
           cp ja-netfilter/target/*-jar-with-dependencies.jar staging/ja-netfilter
           for plugin in ${{env.plugins}};do
             cp ${plugin}/target/*-jar-with-dependencies.jar staging/ja-netfilter/plugins
