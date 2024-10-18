@@ -45,7 +45,6 @@ jobs:
         run: |
           pip install -r .github/requirements.txt
           python .github/get_jb_licenses.py
-          tree .github/licenses
       - name: Stage Artifacts
         env:
           plugins: plugin-dns plugin-power plugin-url
@@ -54,7 +53,7 @@ jobs:
         run: |
           mkdir -p staging/ja-netfilter/plugins
           cp -r src/* staging/ja-netfilter
-          cp -r .github/licenses staging/ja-netfilter
+          cp -r licenses staging/ja-netfilter
           cp ja-netfilter/target/*-jar-with-dependencies.jar staging/ja-netfilter
           for plugin in ${{env.plugins}};do
             cp ${plugin}/target/*-jar-with-dependencies.jar staging/ja-netfilter/plugins
