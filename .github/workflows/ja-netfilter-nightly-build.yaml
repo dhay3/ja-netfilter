@@ -48,11 +48,12 @@ jobs:
       - name: Stage Artifacts
         env:
           plugins: plugin-dns plugin-power plugin-url
-          targets: dbeaver jetbrains
+#          targets: jetbrains
+          targets: jetbrains dbeaver
         run: |
-          mkdir -p staging/ja-netfilter/plugins  
-          mv licenses staging/ja-netfilter
-          cp .github/base.vmoptions staging/ja-netfilter
+          mkdir -p staging/ja-netfilter/plugins
+          cp -r src/* staging/ja-netfilter
+          cp -r .github/licenses staging/ja-netfilter
           cp ja-netfilter/target/*-jar-with-dependencies.jar staging/ja-netfilter
           for plugin in ${{env.plugins}};do
             cp ${plugin}/target/*-jar-with-dependencies.jar staging/ja-netfilter/plugins
@@ -61,12 +62,15 @@ jobs:
             cd staging/ja-netfilter
             ln -s plugins plugins-${target}
             cd ../..
-            cp -r .github/config-${target} staging/ja-netfilter
           done
-          cd staging && ls -lh
+          cd staging && tree
           tar -cvf ja-netfilter.tar ja-netfilter && bzip2 ja-netfilter.tar
+          tee ja-netfilter.tar.bz2.sha1sum <<< $(sha1sum ja-netfilter.tar.bz2) >
       - name: Create Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$(date -I).$(uuidgen -t)" --notes "nightly build" staging/ja-netfilter.tar.bz2
+          timestamp=$(date -I)
+          uuid=$(uuidgen -t)
+          gh release create "${timestamp}.${uuid}" --notes "nightly build" \
+            staging/ja-netfilter.tar.bz2 staging/ja-netfilter.tar.bz2.sha1sum
