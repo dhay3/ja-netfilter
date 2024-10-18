@@ -64,8 +64,8 @@ jobs:
             cd ../..
           done
           cd staging && tree
-          tar -cvf ja-netfilter.tar ja-netfilter && bzip2 ja-netfilter.tar
-          tee ja-netfilter.tar.bz2.sha1sum <<< $(sha1sum ja-netfilter.tar.bz2) >
+          tar -cf ja-netfilter.tar ja-netfilter && bzip2 ja-netfilter.tar
+          tee ja-netfilter.tar.bz2.sha1sum <<< $(sha1sum ja-netfilter.tar.bz2)
       - name: Create Release
         env:
           GH_TOKEN: ${{ github.token }}
