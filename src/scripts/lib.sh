@@ -43,7 +43,7 @@ function lib::fmt::codeMessage() {
 
 function lib::fmt::errorMessage() {
   local msg="${*}"
-  printf "%s%s[EROR] %s%s\n" "${FMT_RED}" "${FMT_BOLD}" "${FMT_RESET}" "${msg}" >&2
+  printf "%s%s[EROR] %s%s\n" "${FMT_RED}" "${FMT_BOLD}" "${FMT_RESET}" "${msg}" >&2 && exit 1
 }
 
 function lib::fmt::succeedMessage() {

@@ -30,16 +30,14 @@ function install::listBanner() {
 
 
 function install::preCheck(){
-  local ret
   [[ -f "${JA_NETFILTER_CORE_PATH}" ]] ||
-    lib::fmt::errorMessage "Core jar has not been found in ${BASE_PATH}" && ret=1
+    lib::fmt::errorMessage "Core jar has not been found in ${BASE_PATH}"
   [[ -h "${JB_PLUGINS_PATH}" && -n $(ls "${JB_PLUGINS_PATH}") ]] ||
-    lib::fmt::errorMessage "plugins-jetbrains has not been found in ${BASE_PATH} or an empty directory" && ret=1
+    lib::fmt::errorMessage "plugins-jetbrains has not been found in ${BASE_PATH} or an empty directory"
   [[ -d "${JB_CONFIGS_PATH}" && -n $(ls "${JB_CONFIGS_PATH}") ]] ||
-    lib::fmt::errorMessage "config-jetbrains has not been found in ${BASE_PATH} or an empty directory" && ret=1
+    lib::fmt::errorMessage "config-jetbrains has not been found in ${BASE_PATH} or an empty directory"
   [[ -f "${JB_BASE_VM_OPTIONS_PATH}" ]] ||
-    lib::fmt::errorMessage "__base.vmoptions has not been found in ${BASE_PATH}" && ret=1
-  [[ "${ret}" == 1 ]] && exit 1
+    lib::fmt::errorMessage "__base.vmoptions has not been found in ${BASE_PATH}"
 }
 
 
@@ -98,10 +96,11 @@ function install::createOrAppendEnvFile(){
   local jb_production_vm_options_path="${BASE_PATH}/vmoptions/${jb_production_vm_options}"
   local jb_production_u=$(lib::fmt::upperCase "${JB_PRODUCTION}")
   if [[ "${XDG_SESSION_TYPE}" == x11 ]];then
-    local x_env=~/.xprofile
-    touch "${x_env}" && sed -i'~' 'p' "${x_env}"
-    sed -i "/export ${jb_production_u}_VM_OPTIONS=/d" "${x_env}"
-    echo "export ${jb_production_u}_VM_OPTIONS=${jb_production_vm_options_path}" >> "${x_env}"
+    #local x_env=~/.xprofile
+    #touch "${x_env}" && sed -i'~' 'p' "${x_env}"
+    #sed -i "/export ${jb_production_u}_VM_OPTIONS=/d" "${x_env}"
+    #echo "export ${jb_production_u}_VM_OPTIONS=${jb_production_vm_options_path}" >> "${x_env}"
+    noop
   elif [[ "${XDG_SESSION_TYPE}" == wayland ]];then
 #    local w_env=~/.xprofile
 #    touch "${w_env}" && touch "${w_env}" && sed -i'~' 'p' "${w_env}"
