@@ -14,8 +14,8 @@ declare -rg JA_NETFILTER_PLUGINS_PATH="${BASE_PATH}/plugins"
 declare -rg JB_APPNAME="jetbrains"
 declare -rg JB_CONFIGS_PATH="${BASE_PATH}/config-${JB_APPNAME}"
 declare -rg JB_PLUGINS_PATH="${BASE_PATH}/plugins-${JB_APPNAME}"
-declare -rg JB_BASE_VM_OPTIONS_PATH="${BASE_PATH}/vmoptions/__base.vmoptions"
-declare -g JB_PRODUCTION
+declare -rg JB_BASE_VM_OPTIONS_PATH="${BASE_PATH}/__base.vmoptions"
+declare -g JB_PRODUCTION_S
 
 
 function install::listBanner() {
@@ -64,37 +64,45 @@ function install::chooseMenu(){
   lib::fmt::infoMessage "Choose which IDE(s) should be activated"
   function __(){
       install::listMenu
-      read -rp "        :: Please Input a number: " JB_PRODUCTION
-         case "${JB_PRODUCTION}" in
-           0) JB_PRODUCTION=idea;;
-           1) JB_PRODUCTION=pycharm;;
-           2) JB_PRODUCTION=clion;;
-           3) JB_PRODUCTION=goland;;
-           4) JB_PRODUCTION=webstorm;;
-           5) JB_PRODUCTION=phpstorm;;
-           6) JB_PRODUCTION=datagrip;;
-           7) JB_PRODUCTION=rubymine;;
-           8) JB_PRODUCTION=rider;;
-           9) JB_PRODUCTION=all;;
+      read -rp "        :: Please Input a number: " JB_PRODUCTION_S
+         case "${JB_PRODUCTION_S}" in
+           0) JB_PRODUCTION_S=Idea;;
+           1) JB_PRODUCTION_S=Pycharm;;
+           2) JB_PRODUCTION_S=CLion;;
+           3) JB_PRODUCTION_S=GoLand;;
+           4) JB_PRODUCTION_S=WebStorm;;
+           5) JB_PRODUCTION_S=PhPStorm;;
+           6) JB_PRODUCTION_S=DataGrip;;
+           7) JB_PRODUCTION_S=RubyMine;;
+           8) JB_PRODUCTION_S=Rider;;
+           9) JB_PRODUCTION_S=(Idea Pycharm CLion GoLand WebStorm PhPStorm DataGrip RubyMine Rider);;
            *) lib::fmt::warningMessage "Choose from [0 - 9]" && __
           esac
   }
   __
 }
 
+
 function install::createVmOptionFile(){
-  local jb_production_vm_options="${JB_PRODUCTION}.vmoptions"
-  local jb_production_vm_options_path="${BASE_PATH}/vmoptions/${jb_production_vm_options}"
-  cp "${JB_BASE_VM_OPTIONS_PATH}" "${jb_production_vm_options_path}"
-  echo "-javaagent:${JA_NETFILTER_CORE_PATH}=${JB_APPNAME}" >> "${jb_production_vm_options_path}"
+  for JB_PRODUCTION in "${JB_PRODUCTION_S[@]}";do
+    local jb_production_vm_options="${JB_PRODUCTION}.vmoptions"
+    local jb_production_vm_options_path="${BASE_PATH}/vmoptions/${jb_production_vm_options}"
+    install -D "${JB_BASE_VM_OPTIONS_PATH}" "${jb_production_vm_options_path}"
+    echo "-javaagent:${JA_NETFILTER_CORE_PATH}=${JB_APPNAME}" >> "${jb_production_vm_options_path}"
+    lib::fmt::succeedMessage "${JB_PRODUCTION} vmoptions has been created"
+  done
 }
+
+
+#function install::(){
+#  noop
+#}
 
 function go(){
     install::listBanner
     install::preCheck
     install::chooseMenu
     install::createVmOptionFile
-    echo ${JB_PRODUCTION}
 
 
 }

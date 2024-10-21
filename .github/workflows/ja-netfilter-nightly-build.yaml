@@ -50,6 +50,7 @@ jobs:
           plugins: plugin-dns plugin-power plugin-url
           targets: jetbrains
 #          targets: jetbrains dbeaver
+        # use install instead
         run: |
           mkdir -p staging/ja-netfilter/plugins
           cp -r src/* staging/ja-netfilter
