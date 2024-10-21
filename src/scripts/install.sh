@@ -96,17 +96,17 @@ function install::createOrAppendEnvFile(){
   local jb_production_vm_options_path="${BASE_PATH}/vmoptions/${jb_production_vm_options}"
   local jb_production_u=$(lib::fmt::upperCase "${JB_PRODUCTION}")
   if [[ "${XDG_SESSION_TYPE}" == x11 ]];then
-    #local x_env=~/.xprofile
-    #touch "${x_env}" && sed -i'~' 'p' "${x_env}"
-    #sed -i "/export ${jb_production_u}_VM_OPTIONS=/d" "${x_env}"
-    #echo "export ${jb_production_u}_VM_OPTIONS=${jb_production_vm_options_path}" >> "${x_env}"
-    noop
+    local x_env=~/.xprofile
+    touch "${x_env}" && ([[ -f "${x_env}~" ]] || sed -i'~' '' "${x_env}")
+    sed -i "/export ${jb_production_u}_VM_OPTIONS=/d" "${x_env}"
+    echo "export ${jb_production_u}_VM_OPTIONS=${jb_production_vm_options_path}" >> "${x_env}"
+    :
   elif [[ "${XDG_SESSION_TYPE}" == wayland ]];then
 #    local w_env=~/.xprofile
-#    touch "${w_env}" && touch "${w_env}" && sed -i'~' 'p' "${w_env}"
+#    touch "${w_env}" && touch "${w_env}" && sed -i'~' '' "${w_env}"
 #    sed -i "/export ${jb_production_u}_VM_OPTIONS=/d" "${w_env}"
 #    echo "export ${jb_production_u}_VM_OPTIONS=${jb_production_vm_options_path}" >> "${w_env}"
-    noop
+    :
   else
     lib::fmt::errorMessage "XDG_SESSION_TYPE ${XDG_SESSION_TYPE} is not supported" && exit 1
   fi
