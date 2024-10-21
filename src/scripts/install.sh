@@ -19,7 +19,6 @@ declare -g JB_PRODUCTION_S
 
 
 function install::listBanner() {
-  echo   'Special thanks to https://linux.do/'
   echo
   printf '     %s (_)%s__  %s/ /_%s/ /_%s  _____%s____ _%s\n' ${FMT_RAINBOW} ${FMT_RESET}
   printf '    %s / /%s _ \%s/ __%s/ __ \%s/ ___%s/ __ `/%s\n' ${FMT_RAINBOW} ${FMT_RESET}
@@ -40,7 +39,7 @@ function install::preCheck(){
     lib::fmt::errorMessage "config-jetbrains has not been found in ${BASE_PATH} or an empty directory" && ret=1
   [[ -f "${JB_BASE_VM_OPTIONS_PATH}" ]] ||
     lib::fmt::errorMessage "__base.vmoptions has not been found in ${BASE_PATH}" && ret=1
-#  [[ "${ret}" == 1 ]] && exit 1
+  [[ "${ret}" == 1 ]] && exit 1
 }
 
 
@@ -84,31 +83,54 @@ function install::chooseMenu(){
 
 
 function install::createVmOptionFile(){
-  for JB_PRODUCTION in "${JB_PRODUCTION_S[@]}";do
-    local jb_production_vm_options="${JB_PRODUCTION}.vmoptions"
-    local jb_production_vm_options_path="${BASE_PATH}/vmoptions/${jb_production_vm_options}"
-    install -D "${JB_BASE_VM_OPTIONS_PATH}" "${jb_production_vm_options_path}"
-    echo "-javaagent:${JA_NETFILTER_CORE_PATH}=${JB_APPNAME}" >> "${jb_production_vm_options_path}"
-    lib::fmt::succeedMessage "${JB_PRODUCTION} vmoptions has been created"
-  done
+  local jb_production="${1}"
+  local jb_production_vm_options="${jb_production}.vmoptions"
+  local jb_production_vm_options_path="${BASE_PATH}/vmoptions/${jb_production_vm_options}"
+  install -D "${JB_BASE_VM_OPTIONS_PATH}" "${jb_production_vm_options_path}"
+  echo "-javaagent:${JA_NETFILTER_CORE_PATH}=${JB_APPNAME}" >> "${jb_production_vm_options_path}"
+  lib::fmt::succeedMessage "${JB_PRODUCTION}.vmoptions has been created"
 }
 
 
-#function install::(){
-#  noop
-#}
+function install::createOrAppendEnvFile(){
+  local jb_production="${1}"
+  local jb_production_vm_options="${jb_production}.vmoptions"
+  local jb_production_vm_options_path="${BASE_PATH}/vmoptions/${jb_production_vm_options}"
+  local jb_production_u=$(lib::fmt::upperCase "${JB_PRODUCTION}")
+  if [[ "${XDG_SESSION_TYPE}" == x11 ]];then
+    local x_env=~/.xprofile
+    touch "${x_env}" && sed -i'~' 'p' "${x_env}"
+    sed -i "/export ${jb_production_u}_VM_OPTIONS=/d" "${x_env}"
+    echo "export ${jb_production_u}_VM_OPTIONS=${jb_production_vm_options_path}" >> "${x_env}"
+  elif [[ "${XDG_SESSION_TYPE}" == wayland ]];then
+#    local w_env=~/.xprofile
+#    touch "${w_env}" && touch "${w_env}" && sed -i'~' 'p' "${w_env}"
+#    sed -i "/export ${jb_production_u}_VM_OPTIONS=/d" "${w_env}"
+#    echo "export ${jb_production_u}_VM_OPTIONS=${jb_production_vm_options_path}" >> "${w_env}"
+    noop
+  else
+    lib::fmt::errorMessage "XDG_SESSION_TYPE ${XDG_SESSION_TYPE} is not supported" && exit 1
+  fi
+  lib::fmt::succeedMessage "${JB_PRODUCTION} env has been exported"
+}
+
 
 function go(){
     install::listBanner
     install::preCheck
     install::chooseMenu
-    install::createVmOptionFile
+    for JB_PRODUCTION in "${JB_PRODUCTION_S[@]}";do
+      install::createVmOptionFile "${JB_PRODUCTION}"
+      install::createOrAppendEnvFile "${JB_PRODUCTION}"
+    done
 
 
 }
+
 
 __main__(){
   go
 }
+
 
 __main__ "${@}"
