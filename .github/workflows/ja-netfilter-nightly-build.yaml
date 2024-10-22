@@ -31,6 +31,18 @@ jobs:
       - name: Packaging plugin-dns
         run: |
           mvn package -f plugin-dns/pom.xml
+      - name: Packaging plugin-dump
+        run: |
+          mvn package -f plugin-dump/pom.xml
+      - name: Packaging plugin-env
+        run: |
+          mvn package -f plugin-env/pom.xml
+      - name: Packaging plugin-hideme
+        run: |
+          mvn package -f plugin-hideme/pom.xml
+      - name: Packaging plugin-native
+        run: |
+          mvn package -f plugin-native/pom.xml
       - name: Packaging plugin-power
         run: |
           mvn package -f plugin-power/pom.xml

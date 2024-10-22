@@ -31,7 +31,8 @@ to export `{JB}_VM_OPTIONS` environments to sessions no matter which DE or displ
 
 ## Credit
 
-- https://zhile.io/
+- https://linux.do
+- https://zhile.io
 - https://gitee.com/ja-netfilter
 - https://chip-tail-e93.notion.site/Ja-netfilter-9886afbfe1ed4d5e90a713e63718f647#0c547d669d9c463d8136b4c30e156a1c
 - https://www.xuzhengtong.com/2022/07/25/ja-netfilter/ja-netfilter-plugins-power/
