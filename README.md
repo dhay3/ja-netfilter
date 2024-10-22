@@ -4,7 +4,7 @@
 
 Jetbrains IDEs activator for Linux(Xorg/Wayland), build from [ja-netfilter](https://gitee.com/ja-netfilter) nightly.
 
-![image](assests/2024-10-22_15-10-59.png)
+![image](https://raw.githubusercontent.com/dhay3/ja-netfilter/refs/heads/main/assests/2024-10-22_15-10-59.png)
 
 ## How to work
 
@@ -18,9 +18,9 @@ to export `{JB}_VM_OPTIONS` environments to sessions no matter which DE or displ
 
 ### Installation
 
-1. download from [releases page](https://github.com/dhay3/ja-netfilter/releases)(do forget to check the sha1sum)
+1. download tarball from [releases page](https://github.com/dhay3/ja-netfilter/releases)(do forget to check the sha1 checksum)
 2. extract the tarball `bzip2 -d ja-netfilter.tar && tar xvf ja-netfilter.tar`
-3. run `install.sh` directly
+3. run `install.sh` directly, choose which IDE(s) should be activated
 4. paste the matching activation code in licenses folder to IDE(s) you want to be activated
 5. log out current session or reboot
 
