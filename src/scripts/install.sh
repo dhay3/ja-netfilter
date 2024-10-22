@@ -11,17 +11,6 @@ set -eo pipefail
 declare -g JB_PRODUCTION_S
 
 
-function install::listBanner() {
-  echo
-  printf '     %s (_)%s__  %s/ /_%s/ /_%s  _____%s____ _%s\n' ${FMT_RAINBOW} ${FMT_RESET}
-  printf '    %s / /%s _ \%s/ __%s/ __ \%s/ ___%s/ __ `/%s\n' ${FMT_RAINBOW} ${FMT_RESET}
-  printf '   %s / /%s  __%s/ /_%s/ /_/ %s/ /  %s/ /_/ / %s\n' ${FMT_RAINBOW} ${FMT_RESET}
-  printf ' %s__/ /%s\___/%s\__%s/_.___%s/_/   %s\__,_/  %s\n' ${FMT_RAINBOW} ${FMT_RESET}
-  printf '%s/___/%s     %s   %s      %s      %s         %s\n' ${FMT_RAINBOW} ${FMT_RESET}
-  echo
-}
-
-
 function install::preCheck(){
   [[ -f "${JA_NETFILTER_CORE_PATH}" ]] ||
     lib::fmt::errorMessage "Core jar has not been found in ${BASE_PATH}"
@@ -95,8 +84,7 @@ function install::postCheck(){
   lib::fmt::infoMessage "Jetbra installation postCheck done"
 }
 
-function install(){
-    install::listBanner
+function run(){
     install::preCheck
     install::chooseMenu
     for JB_PRODUCTION in "${JB_PRODUCTION_S[@]}";do install::createOrAppendEnvFileLocal "${JB_PRODUCTION}";done
@@ -105,8 +93,9 @@ function install(){
 
 
 __main__(){
-  install
-  lib::fmt::succeedMessage "$(lib::fmt::boldMessage "Better to log out to activate")"
+  lib::fmt::listBanner
+  run
+  lib::fmt::succeedMessage "$(lib::fmt::boldMessage "Log out current session to activate")"
 }
 
 
