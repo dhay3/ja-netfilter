@@ -6,15 +6,8 @@
 set -eo pipefail
 
 . "$( cd "$(dirname "${0}")" && readlink -f lib.sh )"
+. "$( cd "$(dirname "${0}")" && readlink -f vars.sh )"
 
-declare -rg BASE_PATH=$(dirname "$(cd "$(dirname "${0}")" && pwd)")
-declare -rg JA_NETFILTER_CORE="ja-netfilter-jar-with-dependencies.jar"
-declare -rg JA_NETFILTER_CORE_PATH="${BASE_PATH}/${JA_NETFILTER_CORE}"
-declare -rg JA_NETFILTER_PLUGINS_PATH="${BASE_PATH}/plugins"
-declare -rg JB_APPNAME="jetbrains"
-declare -rg JB_CONFIGS_PATH="${BASE_PATH}/config-${JB_APPNAME}"
-declare -rg JB_PLUGINS_PATH="${BASE_PATH}/plugins-${JB_APPNAME}"
-declare -rg JB_BASE_VM_OPTIONS_PATH="${BASE_PATH}/__base.vmoptions"
 declare -g JB_PRODUCTION_S
 
 
@@ -38,6 +31,7 @@ function install::preCheck(){
     lib::fmt::errorMessage "config-jetbrains has not been found in ${BASE_PATH} or an empty directory"
   [[ -f "${JB_BASE_VM_OPTIONS_PATH}" ]] ||
     lib::fmt::errorMessage "__base.vmoptions has not been found in ${BASE_PATH}"
+  lib::fmt::infoMessage "Jetbra installation preCheck done"
 }
 
 
@@ -80,58 +74,33 @@ function install::chooseMenu(){
 }
 
 
-function install::createVmOptionFile(){
+function install::createOrAppendEnvFileLocal(){
+  # at this time now wayland do not support global environments configuration, it can be done by environment.d as well as xorg
+  # [[ "${XDG_SESSION_TYPE}" == x11 ]] || [[ "${XDG_SESSION_TYPE}" == wayland ]]
   local jb_production="${1}"
-  local jb_production_vm_options="${jb_production}.vmoptions"
-  local jb_production_vm_options_path="${BASE_PATH}/vmoptions/${jb_production_vm_options}"
+  local jb_production_u=$(lib::fmt::upperCase "${JB_PRODUCTION}")
+  local jb_production_vm_options_path="${JB_VM_OPTIONS_HOME}/${jb_production}.vmoptions"
   install -D "${JB_BASE_VM_OPTIONS_PATH}" "${jb_production_vm_options_path}"
   echo "-javaagent:${JA_NETFILTER_CORE_PATH}=${JB_APPNAME}" >> "${jb_production_vm_options_path}"
-#  lib::fmt::succeedMessage "${JB_PRODUCTION}.vmoptions has been created"
+  touch "${JB_ENV_PATH}"
+  sed -i "/${jb_production_u}_VM_OPTIONS=/d" "${JB_ENV_PATH}"
+  echo "${jb_production_u}_VM_OPTIONS=${jb_production_vm_options_path}" >> "${JB_ENV_PATH}"
+  install -D  "${JB_ENV_PATH}" "${JB_ENE_SYS_PATH}"
+  lib::fmt::infoMessage "Write ${jb_production_u}_VM_OPTIONS to ${JB_ENE_SYS_PATH}"
 }
 
-
-function install::createOrAppendEnvFileLocal(){
-  local jb_production="${1}"
-  local jb_production_vm_options="${jb_production}.vmoptions"
-  local jb_production_vm_options_path="${BASE_PATH}/vmoptions/${jb_production_vm_options}"
-  local jb_production_u=$(lib::fmt::upperCase "${JB_PRODUCTION}")
-  if [[ "${XDG_SESSION_TYPE}" == x11 ]];then
-    local __x_env="${BASE_PATH}/jetbrains.xprofile" && touch "${__x_env}"
-    sed -i "/export ${jb_production_u}_VM_OPTIONS=/d" "${__x_env}"
-    echo "export ${jb_production_u}_VM_OPTIONS=${jb_production_vm_options_path}" >> "${__x_env}"
-  elif [[ "${XDG_SESSION_TYPE}" == wayland ]];then
-#    local w_env=~/.xprofile
-#    touch "${w_env}" && touch "${w_env}" && sed -i'~' '' "${w_env}"
-#    sed -i "/export ${jb_production_u}_VM_OPTIONS=/d" "${w_env}"
-#    echo "export ${jb_production_u}_VM_OPTIONS=${jb_production_vm_options_path}" >> "${w_env}"
-    :
-  else
-    lib::fmt::errorMessage "XDG_SESSION_TYPE ${XDG_SESSION_TYPE} is not supported" && exit 1
-  fi
-  lib::fmt::infoMessage "${JB_PRODUCTION} environments has been created"
-}
-
-
-function install::createOrAppendEnvFileGlobal(){
-  local x_env=~/.xprofile && touch "${x_env}"
-  local __x_env="${BASE_PATH}/jetbrains.xprofile"
-  [[ -f "${x_env}~" ]] || sed -i'~' '' "${x_env}"
-  sed -i "/source.*\/jetbrains.xprofile/d" "${x_env}"
-  eval 'echo "if [[ -f "${__x_env}" ]];then source "${__x_env}";fi"' >> ${x_env}
-  lib::fmt::infoMessage "Write environments to ${x_env}"
+function install::postCheck(){
+  [[ -f "${JB_ENE_SYS_PATH}" ]] ||
+    lib::fmt::errorMessage "${JB_ENE_SYS_PATH} has not been found"
+  lib::fmt::infoMessage "Jetbra installation postCheck done"
 }
 
 function go(){
     install::listBanner
     install::preCheck
     install::chooseMenu
-    for JB_PRODUCTION in "${JB_PRODUCTION_S[@]}";do
-      install::createVmOptionFile "${JB_PRODUCTION}"
-      install::createOrAppendEnvFileLocal "${JB_PRODUCTION}"
-    done
-    install::createOrAppendEnvFileGlobal
-
-
+    for JB_PRODUCTION in "${JB_PRODUCTION_S[@]}";do install::createOrAppendEnvFileLocal "${JB_PRODUCTION}";done
+    install::postCheck
 }
 
 
