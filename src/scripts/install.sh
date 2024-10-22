@@ -86,21 +86,19 @@ function install::createVmOptionFile(){
   local jb_production_vm_options_path="${BASE_PATH}/vmoptions/${jb_production_vm_options}"
   install -D "${JB_BASE_VM_OPTIONS_PATH}" "${jb_production_vm_options_path}"
   echo "-javaagent:${JA_NETFILTER_CORE_PATH}=${JB_APPNAME}" >> "${jb_production_vm_options_path}"
-  lib::fmt::succeedMessage "${JB_PRODUCTION}.vmoptions has been created"
+#  lib::fmt::succeedMessage "${JB_PRODUCTION}.vmoptions has been created"
 }
 
 
-function install::createOrAppendEnvFile(){
+function install::createOrAppendEnvFileLocal(){
   local jb_production="${1}"
   local jb_production_vm_options="${jb_production}.vmoptions"
   local jb_production_vm_options_path="${BASE_PATH}/vmoptions/${jb_production_vm_options}"
   local jb_production_u=$(lib::fmt::upperCase "${JB_PRODUCTION}")
   if [[ "${XDG_SESSION_TYPE}" == x11 ]];then
-    local x_env=~/.xprofile
-    touch "${x_env}" && ([[ -f "${x_env}~" ]] || sed -i'~' '' "${x_env}")
-    sed -i "/export ${jb_production_u}_VM_OPTIONS=/d" "${x_env}"
-    echo "export ${jb_production_u}_VM_OPTIONS=${jb_production_vm_options_path}" >> "${x_env}"
-    :
+    local __x_env="${BASE_PATH}/jetbrains.xprofile" && touch "${__x_env}"
+    sed -i "/export ${jb_production_u}_VM_OPTIONS=/d" "${__x_env}"
+    echo "export ${jb_production_u}_VM_OPTIONS=${jb_production_vm_options_path}" >> "${__x_env}"
   elif [[ "${XDG_SESSION_TYPE}" == wayland ]];then
 #    local w_env=~/.xprofile
 #    touch "${w_env}" && touch "${w_env}" && sed -i'~' '' "${w_env}"
@@ -110,9 +108,18 @@ function install::createOrAppendEnvFile(){
   else
     lib::fmt::errorMessage "XDG_SESSION_TYPE ${XDG_SESSION_TYPE} is not supported" && exit 1
   fi
-  lib::fmt::succeedMessage "${JB_PRODUCTION} env has been exported"
+  lib::fmt::infoMessage "${JB_PRODUCTION} environments has been created"
 }
 
+
+function install::createOrAppendEnvFileGlobal(){
+  local x_env=~/.xprofile && touch "${x_env}"
+  local __x_env="${BASE_PATH}/jetbrains.xprofile"
+  [[ -f "${x_env}~" ]] || sed -i'~' '' "${x_env}"
+  sed -i "/source.*\/jetbrains.xprofile/d" "${x_env}"
+  eval 'echo "if [[ -f "${__x_env}" ]];then source "${__x_env}";fi"' >> ${x_env}
+  lib::fmt::infoMessage "Write environments to ${x_env}"
+}
 
 function go(){
     install::listBanner
@@ -120,8 +127,9 @@ function go(){
     install::chooseMenu
     for JB_PRODUCTION in "${JB_PRODUCTION_S[@]}";do
       install::createVmOptionFile "${JB_PRODUCTION}"
-      install::createOrAppendEnvFile "${JB_PRODUCTION}"
+      install::createOrAppendEnvFileLocal "${JB_PRODUCTION}"
     done
+    install::createOrAppendEnvFileGlobal
 
 
 }
