@@ -11,7 +11,7 @@ function run(){
   read -rp ":: Do you Want to uninstall Jetbra? [Y/n] " yn
   case "${yn}" in
     y|Y|yes|Yes)
-      [[ -f "${JB_ENV_SYS_PATH}" ]] && (rm -f "${JB_ENV_SYS_PATH}" && lib::fmt::succeedMessage "Jetbra has been uninstalled") \
+      [[ -f "${JB_ENV_SYS_PATH}" ]] && (rm "${JB_ENV_SYS_PATH}" && rm -rf "${BASE_PATH}" && lib::fmt::succeedMessage "Jetbra has been uninstalled") \
         || lib::fmt::errorMessage "Jetbra has not been installed"
       ;;
     n|N|not|Not) exit 0;;
