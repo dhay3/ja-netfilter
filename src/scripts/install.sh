@@ -56,8 +56,8 @@ function install::chooseMenu(){
            5) JB_PRODUCTION_S=PhPStorm;;
            6) JB_PRODUCTION_S=DataGrip;;
            7) JB_PRODUCTION_S=RubyMine;;
-           8) JB_PRODUCTION_S=Rider;;
-           9) JB_PRODUCTION_S=(Idea Pycharm CLion GoLand WebStorm PhPStorm DataGrip RubyMine Rider);;
+           8) JB_PRODUCTION_S=RustOver;;
+           9) JB_PRODUCTION_S=(Idea Pycharm CLion GoLand WebStorm PhPStorm DataGrip RubyMine RustOver);;
            *) lib::fmt::warningMessage "Choose from [0 - 9]" && __
           esac
   }

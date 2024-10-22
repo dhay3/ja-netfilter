@@ -8,7 +8,7 @@ set -eo pipefail
 
 
 function run(){
-  read -rp ":: Do you Want to uninstall Jetbra? [Y/n]" yn
+  read -rp ":: Do you Want to uninstall Jetbra? [Y/n] " yn
   case "${yn}" in
     y|Y|yes|Yes)
       [[ -f "${JB_ENV_SYS_PATH}" ]] && (rm -f "${JB_ENV_SYS_PATH}" && lib::fmt::succeedMessage "Jetbra has been uninstalled") \

@@ -9,6 +9,7 @@ from lxml import etree
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
+
 class cex(Exception):
     def __init__(self, message):
         super().__init__(message)
@@ -41,6 +42,8 @@ def get_licenses(raw_html: str) -> []:
     articles = x_dom.xpath('//article[@data-sequence]')
     for article in articles:
         data_sequence = article.get('data-sequence')
+        if data_sequence not in "II PS DB RM RR WS CL PC GO":
+            continue
         data_title = article.xpath('./descendant::h1')[0].get('title')
         data_version = article.xpath('./descendant::button[@data-version]')[0].get('data-version')
         logger.info(f'Gathering {data_title}.{data_version}')
