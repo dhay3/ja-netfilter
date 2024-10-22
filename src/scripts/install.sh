@@ -95,7 +95,7 @@ function install::postCheck(){
   lib::fmt::infoMessage "Jetbra installation postCheck done"
 }
 
-function go(){
+function install(){
     install::listBanner
     install::preCheck
     install::chooseMenu
@@ -105,7 +105,8 @@ function go(){
 
 
 __main__(){
-  go
+  install
+  lib::fmt::succeedMessage "$(lib::fmt::boldMessage "Better to log out to activate")"
 }
 
 
