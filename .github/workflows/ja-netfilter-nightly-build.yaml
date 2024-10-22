@@ -72,6 +72,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          timestamp=$(date -Iminutes)
+          timestamp=$(date +%Y-%m-%d-%H%M%S)
           gh release create "${timestamp}" --notes "nightly build" \
             staging/ja-netfilter.tar.bz2 staging/ja-netfilter.tar.bz2.sha1sum
