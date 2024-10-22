@@ -50,7 +50,6 @@ jobs:
           plugins: plugin-dns plugin-power plugin-url
           targets: jetbrains
 #          targets: jetbrains dbeaver
-        # use install instead
         run: |
           mkdir -p staging/ja-netfilter/plugins
           cp -r src/* staging/ja-netfilter
@@ -73,7 +72,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          timestamp=$(date -I)
-          uuid=$(uuidgen -t)
-          gh release create "${timestamp}.${uuid}" --notes "nightly build" \
+          timestamp=$(date -Iminutes)
+          gh release create "${timestamp}" --notes "nightly build" \
             staging/ja-netfilter.tar.bz2 staging/ja-netfilter.tar.bz2.sha1sum
