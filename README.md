@@ -8,10 +8,11 @@ Jetbrains IDEs activator for Linux(Xorg/Wayland), build from [ja-netfilter](http
 
 ## How to work
 
-This project depends on [ja-netfilter](https://gitee.com/ja-netfilter) which will block the Jetbrains activation verification's L7 requests, and
-[`environment.d`](https://www.freedesktop.org/software/systemd/man/latest/environment.d.html) to export `{JB}_VM_OPTIONS` environments 
-to sessions no matter which DE or display manager
-
+This project depends on 
+[ja-netfilter](https://gitee.com/ja-netfilter) 
+which will block the Jetbrains activation verification's L7 requests, and
+[`environment.d`](https://www.freedesktop.org/software/systemd/man/latest/environment.d.html) 
+to export `{JB}_VM_OPTIONS` environments to sessions no matter which DE or display manager.
 
 ## How to Use
 
@@ -33,6 +34,7 @@ to sessions no matter which DE or display manager
 - https://zhile.io/
 - https://t.me/ja_netfilter_channel
 - https://gitee.com/ja-netfilter
+- https://3.jetbra.in/
 - https://chip-tail-e93.notion.site/Ja-netfilter-9886afbfe1ed4d5e90a713e63718f647#0c547d669d9c463d8136b4c30e156a1c
 
 ## License
