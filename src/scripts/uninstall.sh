@@ -8,9 +8,12 @@ set -eo pipefail
 
 
 function run(){
-  read -rp ":: Wanna uninstall jetbra? [Y/n]" yn
+  read -rp ":: Do you Want to uninstall Jetbra? [Y/n]" yn
   case "${yn}" in
-    y|Y|yes|Yes) rm -f "${JB_ENE_SYS_PATH}" ;;
+    y|Y|yes|Yes)
+      [[ -f "${JB_ENV_SYS_PATH}" ]] && (rm -f "${JB_ENV_SYS_PATH}" && lib::fmt::succeedMessage "Jetbra has been uninstalled") \
+        || lib::fmt::errorMessage "Jetbra has not been installed"
+      ;;
     n|N|not|Not) exit 0;;
     *) exit 1;;
   esac
@@ -19,9 +22,8 @@ function run(){
 __main__(){
   lib::fmt::listBanner
   run
-  lib::fmt::succeedMessage "$(lib::fmt::boldMessage "Log out current session to activate")"
+  lib::fmt::warningMessage "$(lib::fmt::boldMessage "Log out current session to activate")"
 }
 
 
 __main__ "${@}"
-

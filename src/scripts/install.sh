@@ -14,13 +14,15 @@ declare -g JB_PRODUCTION_S
 function install::preCheck(){
   [[ -f "${JA_NETFILTER_CORE_PATH}" ]] ||
     lib::fmt::errorMessage "Core jar has not been found in ${BASE_PATH}"
-  [[ -h "${JB_PLUGINS_PATH}" && -n $(ls "${JB_PLUGINS_PATH}") ]] ||
+  [[ -h "${JB_PLUGINS_HOME}" && -n $(ls "${JB_PLUGINS_HOME}") ]] ||
     lib::fmt::errorMessage "plugins-jetbrains has not been found in ${BASE_PATH} or an empty directory"
-  [[ -d "${JB_CONFIGS_PATH}" && -n $(ls "${JB_CONFIGS_PATH}") ]] ||
+  [[ -d "${JB_CONFIGS_HOME}" && -n $(ls "${JB_CONFIGS_HOME}") ]] ||
     lib::fmt::errorMessage "config-jetbrains has not been found in ${BASE_PATH} or an empty directory"
+  [[ -d "${JB_LICENSES_HOME}" && -n $(ls "${JB_LICENSES_HOME}") ]] ||
+    lib::fmt::errorMessage "${JB_LICENSES_HOME} has not been found in ${BASE_PATH} or an empty directory"
+  lib::fmt::infoMessage "Jetbra installation preCheck done"
   [[ -f "${JB_BASE_VM_OPTIONS_PATH}" ]] ||
     lib::fmt::errorMessage "__base.vmoptions has not been found in ${BASE_PATH}"
-  lib::fmt::infoMessage "Jetbra installation preCheck done"
 }
 
 
@@ -63,31 +65,42 @@ function install::chooseMenu(){
 }
 
 
-function install::createOrAppendEnvFileLocal(){
+function install::createEnvAndCallbackLicense(){
   # at this time now wayland do not support global environments configuration, it can be done by environment.d as well as xorg
   # [[ "${XDG_SESSION_TYPE}" == x11 ]] || [[ "${XDG_SESSION_TYPE}" == wayland ]]
   local jb_production="${1}"
   local jb_production_u=$(lib::fmt::upperCase "${JB_PRODUCTION}")
   local jb_production_vm_options_path="${JB_VM_OPTIONS_HOME}/${jb_production}.vmoptions"
+
+    function __(){
+      for license in "${JB_LICENSES_HOME}"/*;do
+        if [[ "${license^^}" =~ ${jb_production_u} ]];then
+          lib::fmt::infoMessage "$(lib::fmt::boldMessage "Please paste ${license}'s activation code to ${jb_production}")"
+        fi
+      done
+    }
+
   install -D "${JB_BASE_VM_OPTIONS_PATH}" "${jb_production_vm_options_path}"
   echo "-javaagent:${JA_NETFILTER_CORE_PATH}=${JB_APPNAME}" >> "${jb_production_vm_options_path}"
   touch "${JB_ENV_PATH}"
   sed -i "/${jb_production_u}_VM_OPTIONS=/d" "${JB_ENV_PATH}"
   echo "${jb_production_u}_VM_OPTIONS=${jb_production_vm_options_path}" >> "${JB_ENV_PATH}"
-  install -D  "${JB_ENV_PATH}" "${JB_ENE_SYS_PATH}"
-  lib::fmt::infoMessage "Write ${jb_production_u}_VM_OPTIONS to ${JB_ENE_SYS_PATH}"
+  install -D  "${JB_ENV_PATH}" "${JB_ENV_SYS_PATH}"
+  lib::fmt::infoMessage "Write ${jb_production_u}_VM_OPTIONS to ${JB_ENV_SYS_PATH}"
+   __
 }
 
+
 function install::postCheck(){
-  [[ -f "${JB_ENE_SYS_PATH}" ]] ||
-    lib::fmt::errorMessage "${JB_ENE_SYS_PATH} has not been found"
+  [[ -f "${JB_ENV_SYS_PATH}" ]] ||
+    lib::fmt::errorMessage "${JB_ENV_SYS_PATH} has not been found"
   lib::fmt::infoMessage "Jetbra installation postCheck done"
 }
 
 function run(){
     install::preCheck
     install::chooseMenu
-    for JB_PRODUCTION in "${JB_PRODUCTION_S[@]}";do install::createOrAppendEnvFileLocal "${JB_PRODUCTION}";done
+    for JB_PRODUCTION in "${JB_PRODUCTION_S[@]}";do install::createEnvAndCallbackLicense "${JB_PRODUCTION}";done
     install::postCheck
 }
 
@@ -95,7 +108,8 @@ function run(){
 __main__(){
   lib::fmt::listBanner
   run
-  lib::fmt::succeedMessage "$(lib::fmt::boldMessage "Log out current session to activate")"
+  lib::fmt::succeedMessage "Jetbra has been installed"
+  lib::fmt::warningMessage "$(lib::fmt::boldMessage "Log out current session to activate")"
 }
 
 
